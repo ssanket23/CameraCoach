@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CameraCoach early access for Android: live photo composition guidance, adjustable pose references, and optional photo enhancement.">
+  <meta name="referrer" content="no-referrer">
+  <title>CameraCoach - a little guidance, a better photo</title>
+  <script>
+    (() => {
+      const param = new URLSearchParams(window.location.search).get("scoutTheme");
+      const theme =
+        param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --cp-bg: #f7f4ef;
+      --cp-bg-elevated: #fcfbf8;
+      --cp-surface: #ffffff;
+      --cp-surface-soft: #f5f5f5;
+      --cp-border: #dedede;
+      --cp-border-strong: #919191;
+      --cp-text: #242424;
+      --cp-text-muted: #5c5c5c;
+      --cp-text-soft: #6f6f6f;
+      --cp-accent: #b11f4b;
+      --cp-accent-hover: #9a1a41;
+      --cp-accent-soft: rgba(177, 31, 75, 0.08);
+      --cp-accent-fg: #ffffff;
+      --cp-success: #16a34a;
+      --cp-danger: #dc2626;
+      --cp-warning: #f59e0b;
+      --cp-link: #0078d4;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+      --cp-overlay: rgba(255, 255, 255, 0.8);
+      --cp-panel: rgba(255, 255, 255, 0.86);
+      --cp-panel-strong: rgba(255, 255, 255, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.55);
+      --cp-highlight: rgba(177, 31, 75, 0.12);
+    }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --cp-bg: #3d3b3a;
+      --cp-bg-elevated: #343231;
+      --cp-surface: #292929;
+      --cp-surface-soft: #2e2e2e;
+      --cp-border: #474747;
+      --cp-border-strong: #5f5f5f;
+      --cp-text: #dedede;
+      --cp-text-muted: #919191;
+      --cp-text-soft: #b0b0b0;
+      --cp-accent: #fd8ea1;
+      --cp-accent-hover: #fb7b91;
+      --cp-accent-soft: rgba(253, 142, 161, 0.14);
+      --cp-accent-fg: #1a1a1a;
+      --cp-success: #4ade80;
+      --cp-danger: #f87171;
+      --cp-warning: #fbbf24;
+      --cp-link: #4da6ff;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+      --cp-overlay: rgba(41, 41, 41, 0.88);
+      --cp-panel: rgba(41, 41, 41, 0.72);
+      --cp-panel-strong: rgba(41, 41, 41, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.04);
+      --cp-highlight: rgba(253, 142, 161, 0.12);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-padding-top: 24px; }
+    body { margin: 0; background: var(--cp-bg); color: var(--cp-text); font: 17px/1.65 "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif; }
+    a { color: var(--cp-link); text-underline-offset: 4px; overflow-wrap: anywhere; }
+    a:hover { text-decoration-thickness: 2px; }
+    a:focus-visible, summary:focus-visible { outline: 3px solid var(--cp-accent); outline-offset: 5px; }
+    .wrap { width: min(1080px, calc(100% - 40px)); margin-inline: auto; }
+    header { border-bottom: 1px solid var(--cp-border); }
+    nav { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; padding-block: 24px; }
+    .brand { color: var(--cp-text); text-decoration: none; font-size: 22px; font-weight: 750; letter-spacing: -.5px; }
+    .navlinks { display: flex; gap: 24px; flex-wrap: wrap; font-size: 15px; }
+    .navlinks a { color: var(--cp-text-muted); }
+    .hero { display: grid; grid-template-columns: 1.25fr .75fr; gap: 56px; align-items: center; padding-block: 72px; }
+    .eyebrow { color: var(--cp-accent); font-size: 13px; font-weight: 750; letter-spacing: 2px; text-transform: uppercase; }
+    h1 { font-size: clamp(36px, 5.5vw, 64px); letter-spacing: -2px; line-height: 1.08; margin: 16px 0 24px; max-width: 13ch; }
+    h2 { font-size: clamp(25px, 3vw, 34px); line-height: 1.2; letter-spacing: -.75px; margin: 0 0 24px; }
+    h3 { font-size: 19px; margin: 0 0 8px; }
+    p { margin: 0 0 16px; }
+    .lede { font-size: 20px; color: var(--cp-text-muted); max-width: 48ch; }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin: 28px 0 16px; }
+    .button { display: inline-block; padding: 12px 24px; border-radius: .625rem; background: var(--cp-accent); color: var(--cp-accent-fg); font-weight: 650; text-decoration: none; min-height: 48px; }
+    .button:hover { background: var(--cp-accent-hover); }
+    .small { color: var(--cp-text-muted); font-size: 14px; }
+    .badge { display: inline-block; padding: 4px 12px; background: var(--cp-accent-soft); color: var(--cp-accent); border: 1px solid var(--cp-border); border-radius: .625rem; font-size: 13px; font-weight: 600; }
+    .camera { border: 1px solid var(--cp-border-strong); border-radius: 24px; padding: 20px; background: var(--cp-surface); margin: 0; }
+    .camera-bar { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 16px; font-size: 13px; color: var(--cp-text-muted); }
+    .viewfinder { display: block; width: 100%; height: auto; border-radius: 16px; background: var(--cp-bg-elevated); }
+    .gridline { stroke: var(--cp-border); stroke-width: 1; }
+    .terrain { fill: var(--cp-surface-soft); stroke: var(--cp-border-strong); stroke-width: 2; }
+    .pose { fill: none; stroke: var(--cp-accent); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+    .sun { fill: var(--cp-accent-soft); stroke: var(--cp-accent); stroke-width: 2; }
+    figcaption { padding-top: 16px; }
+    .coach { color: var(--cp-text); font-weight: 650; }
+    section { padding-block: 48px; border-top: 1px solid var(--cp-border); }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .card { background: var(--cp-surface); padding: 24px; border: 1px solid var(--cp-border); border-radius: 16px; }
+    .card p { font-size: 16px; color: var(--cp-text-muted); margin-bottom: 0; }
+    .number { font-size: 13px; font-weight: 750; color: var(--cp-accent); margin-bottom: 16px; }
+    .prose { max-width: 78ch; }
+    .notice { border-left: 4px solid var(--cp-accent); padding: 16px 20px; background: var(--cp-accent-soft); border-radius: 0 .625rem .625rem 0; margin: 24px 0; }
+    li { margin-bottom: 12px; }
+    ol, ul { padding-left: 24px; }
+    details { background: var(--cp-surface); border: 1px solid var(--cp-border); border-radius: .625rem; padding: 16px 20px; margin-block: 12px; }
+    summary { font-weight: 650; cursor: pointer; min-height: 32px; }
+    details p { margin-top: 12px; }
+    code { font-family: Consolas, "Courier New", Courier, monospace; font-size: .9em; overflow-wrap: anywhere; }
+    footer { border-top: 1px solid var(--cp-border); padding-block: 32px; }
+    .skip { position: absolute; left: 12px; top: -80px; padding: 12px; background: var(--cp-surface); z-index: 2; }
+    .skip:focus { top: 12px; }
+    @media (max-width: 760px) {
+      .hero { grid-template-columns: 1fr; gap: 32px; padding-block: 40px; }
+      .camera { max-width: 360px; width: 100%; margin-inline: auto; }
+      .cards { grid-template-columns: 1fr; }
+      .navlinks { gap: 16px; }
+      h1 { letter-spacing: -1px; max-width: 15ch; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header>
+    <nav class="wrap" aria-label="Main navigation">
+      <a class="brand" href="./">CameraCoach</a>
+      <div class="navlinks">
+        <a href="#features">Features</a>
+        <a href="#install">Install</a>
+        <a href="#privacy">Privacy</a>
+        <a href="https://github.com/ssanket23/CameraCoach/issues">Feedback</a>
+      </div>
+    </nav>
+  </header>
+  <main id="main" class="wrap">
+    <div class="hero">
+      <div>
+        <div class="eyebrow">Android / free early access</div>
+        <h1>A little guidance.<br>A better photo.</h1>
+        <p class="lede">Find your frame, explore a pose, and make the final edit yours. A pocket photography coach for the moments in front of you.</p>
+        <div class="actions">
+          <a class="button" href="https://github.com/ssanket23/CameraCoach/releases/download/v0.3.1/CameraCoach-0.3.1.apk">Download Android APK</a>
+          <a href="https://github.com/ssanket23/CameraCoach/releases/tag/v0.3.1">Release notes &amp; checksum</a>
+        </div>
+        <p class="small">v0.3.1 &middot; Android 10+ &middot; About 142 MB &middot; No subscription</p>
+        <p class="small">Direct installation, not a Play Store listing. Read the <a href="#install">installation instructions</a> and <a href="#privacy">privacy information</a> first.</p>
+      </div>
+      <figure class="camera">
+        <div class="camera-bar"><span>Person + scenery</span><span>Pose guide</span></div>
+        <svg class="viewfinder" viewBox="0 0 300 360" role="img" aria-labelledby="illustration-title">
+          <title id="illustration-title">Illustration of a pose outline within a composition grid, not a screenshot</title>
+          <circle class="sun" cx="233" cy="72" r="25"/>
+          <path class="terrain" d="M0 260 L85 157 L184 277 L252 198 L300 246 L300 360 L0 360 Z"/>
+          <path class="gridline" d="M100 0V360 M200 0V360 M0 120H300 M0 240H300"/>
+          <circle class="pose" cx="105" cy="131" r="17"/>
+          <path class="pose" d="M105 150V214 M84 165L124 165 M84 165L73 197L88 211 M124 165L148 184L131 204 M91 214H119 M94 215L89 258L80 305 M116 215L125 258L136 305"/>
+        </svg>
+        <figcaption><p class="coach">Leave room for the scenery.</p><p class="small">Pose and composition illustration. Actual guidance depends on what your camera can see.</p></figcaption>
+      </figure>
+    </div>
+    <section id="features" aria-labelledby="features-title">
+      <h2 id="features-title">From framing to finishing touches</h2>
+      <div class="cards">
+        <article class="card"><div class="number">01 / COMPOSE</div><h3>One suggestion at a time</h3><p>Framing, subject placement, and phone-level guidance. Switch to Scenery only when the landscape is the subject.</p></article>
+        <article class="card"><div class="number">02 / EXPLORE</div><h3>A pose you can adjust</h3><p>Try original outlines, or explicitly search free reference photos. Suitable photos produce a new outline from locally detected joints.</p></article>
+        <article class="card"><div class="number">03 / FINISH</div><h3>Keep the original</h3><p>Optional enhancement and adjustable social-friendly crops. Save a separate copy; your captured original stays untouched.</p></article>
+      </div>
+      <div class="notice prose"><strong>Useful guidance, not a guarantee.</strong> This is a prototype. Pose matching and background guesses are approximate, reference searches may find no usable result, and no suggestion is a safety assessment. Skip anything uncomfortable or unsafe.</div>
+    </section>
+    <section id="install" aria-labelledby="install-title">
+      <div class="prose">
+        <span class="badge">Signed release APK</span>
+        <h2 id="install-title">Try it on your Android phone</h2>
+        <ol>
+          <li>Download <strong>CameraCoach-0.3.1.apk</strong> using the button above. GitHub's automatic source archives contain only this website and documentation, not an installable app.</li>
+          <li>Open the APK. If prompted, allow your browser or file app to install unknown apps <strong>only if you trust this release</strong>. You can revoke that installation permission afterward.</li>
+          <li>Open CameraCoach. Grant camera access for live coaching, or select Open photo to try the editor without camera permission.</li>
+          <li>For online pose ideas, choose <strong>Pose guide &rarr; Find reference poses</strong>, review the background choice, and search. Inspect the photo and outline before applying it.</li>
+        </ol>
+        <p class="small">Do not disable Play Protect or other security protections if a download is blocked. Managed phones and regional developer-verification requirements may prevent installation.</p>
+        <details><summary>Already using a development build?</summary><p>The public APK uses a dedicated release signing key. It cannot replace an older debug-signed CameraCoach in place. Preserve your photos and any settings you need before deciding whether to uninstall the old debug app. We do not uninstall it for you.</p></details>
+        <details><summary>How do updates work?</summary><p>There is no automatic updater. Download later versions from the same GitHub repository. Public updates will reuse the release signing key and increase the version code, so they can install over this release. The APK checksum and public signing-certificate information are included with each release.</p></details>
+        <details><summary>Which phones work?</summary><p>Android 10 or newer is required. Physical-device testing so far is limited to a Samsung Galaxy S23 FE. Camera access, zoom, processing, and performance vary by phone. There is no iOS version yet.</p></details>
+      </div>
+    </section>
+    <section id="privacy" aria-labelledby="privacy-title">
+      <div class="prose">
+        <div class="eyebrow">Privacy information / September 25, 2026</div>
+        <h2 id="privacy-title">Your pictures are not search requests.</h2>
+        <p>This information covers CameraCoach Android v0.3.1 and this distribution website, maintained through the GitHub account <a href="https://github.com/ssanket23">ssanket23</a>. It describes the current implementation, not a claim of regulatory certification.</p>
+        <h3>Camera, photos, and local analysis</h3>
+        <p>The camera is used for preview, local composition/pose analysis, and photographs you choose to capture. Frames and joint coordinates used for coaching are processed locally and are not uploaded by CameraCoach. The app does not identify people or infer gender. Style selection is yours.</p>
+        <p>Original captures and exported copies are saved in <code>Pictures/CameraCoach</code>. Selected photos are accessed through Android's photo picker; the app does not request broad photo-library, microphone, contacts, or location permission. No CameraCoach account is required.</p>
+        <h3>Optional Wikimedia Commons search</h3>
+        <p>Only tapping Search free photos starts a reference search. The chosen background keyword and fixed search filters go to Wikimedia Commons. Wikimedia receives ordinary network information such as IP address, request time, and user-agent, and hosts the downloaded images. No camera photo, location, or detected joints are sent by this search.</p>
+        <p>Reference analysis is local. Thumbnails are held temporarily in memory while the panel is used, not saved to your gallery. Selected normalized pose geometry and attribution can remain in temporary Android activity state. Source and license buttons open your browser; those sites have their own policies. See the <a href="https://foundation.wikimedia.org/wiki/Policy:Privacy_policy">Wikimedia privacy policy</a>.</p>
+        <h3>Google ML Kit diagnostics are separate</h3>
+        <p>The bundled Google ML Kit SDK processes image inputs and inference outputs on-device. It separately sends SDK diagnostic and usage metrics to Google, including device/app information, per-installation identifiers, performance, configuration, events/errors, and input/output sizes. Pose detection also uses Firebase services for remote configuration diagnostics. These SDK connections can occur even when you do not search Commons.</p>
+        <p>Google describes HTTPS transmission and its own handling of this information in <a href="https://developers.google.com/ml-kit/terms">ML Kit Terms &amp; Privacy</a>, its <a href="https://developers.google.com/ml-kit/android-data-disclosure">Android data disclosures</a>, and the <a href="https://policies.google.com/privacy">Google privacy policy</a>. CameraCoach has no in-app switch for disabling SDK metrics. No separate CameraCoach analytics backend or advertising SDK is configured.</p>
+        <h3>Sharing and speech</h3>
+        <p>Sharing happens only when you choose a receiving app through Android. The receiving app controls its handling of the photo. Optional spoken coaching uses a voice marked as offline by your installed text-to-speech provider; the provider and operating system are outside CameraCoach's control.</p>
+        <h3>Retention and your choices</h3>
+        <p>You can decline or revoke camera access, avoid online reference search, leave voice off, and refrain from sharing. Delete saved photos through your gallery or file manager. Clearing app storage removes local preferences/state but does not necessarily remove gallery images. Uninstalling stops further app activity, but does not erase data previously handled by third-party providers. Refer to their policies for retention and data requests.</p>
+        <h3>This website and downloads</h3>
+        <p>The site uses no added analytics scripts, external fonts, advertising, cookies, or local-storage tracking. GitHub hosts the site, repository, and download assets and receives request information under the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub privacy statement</a>. Following external links subjects those requests to the destination's policies.</p>
+        <h3>Public content and support</h3>
+        <p>Commons results are not curated. Keyword/license filters and pose checks do not guarantee suitable content or rights for every use. The prototype is not specifically designed for children. Never imitate dangerous locations or movements.</p>
+        <p>For questions or corrections, use <a href="https://github.com/ssanket23/CameraCoach/issues">CameraCoach issues</a>. Issues are public: do not include private photos or sensitive information. If your question needs personal details, first request a private contact channel without posting those details. Material changes will be documented with future releases.</p>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <p><strong>CameraCoach</strong> &middot; Free early access, built for learning.</p>
+      <p class="small"><a href="https://github.com/ssanket23/CameraCoach">Distribution repository</a> &middot; <a href="THIRD-PARTY-NOTICES.md">Third-party notices</a> &middot; <a href="#privacy">Privacy information</a></p>
+      <p class="small">App source is not published. Third-party components and reference photos retain their own licenses. Not affiliated with or endorsed by Google, Wikimedia, Samsung, or Instagram.</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,14 @@
+CameraCoach public release signing identity
+
+Package: com.cameracoach.app
+Certificate subject: CN=CameraCoach
+Key algorithm: RSA
+Key size: 3072 bits
+Certificate SHA-256:
+3d508d68c671ad8a93ffda44dee5e2d7a8ea7c9be4454080ad44aca8859482e7
+
+This is public certificate information, not a private key.
+CameraCoach-0.3.1.apk is signed using APK Signature Scheme v3.
+Future public updates must retain this identity and increase the version code.
+Earlier debug builds use a different key and cannot be updated in place by this APK.
+The fingerprint identifies the signing key; it is not a third-party safety endorsement.

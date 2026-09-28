@@ -1,0 +1,28 @@
+CameraCoach 0.3.1 early access
+Build date: 2026-09-25
+Package: com.cameracoach.app
+Version code: 6
+Minimum Android API: 29 (Android 10)
+Target Android API: 36
+APK: CameraCoach-0.3.1.apk
+APK bytes: 141484663
+APK SHA-256:
+e9abf50cc035083f68a6ab29ad80d72c8a2536c4f3cb317352d1f1aa78275aba
+
+Release verification:
+- 75 release unit/Robolectric tests passed, no failures or errors.
+- Release Android lint completed without errors.
+- APK alignment verified with zipalign -c -P 16 -v 4.
+- APK signature verified with apksigner: v3, RSA-3072, one signer.
+- Manifest does not enable android:debuggable.
+- All included arm64-v8a/x86_64 ELF LOAD segments have >=16-KiB alignment.
+  This packaging check is not a claim of runtime testing on a 16-KiB device.
+
+Physical test scope:
+The 0.3.0 debug build was exercised on a Samsung Galaxy S23 FE for live
+reference retrieval/extraction, outline selection, scenery mode, and capture.
+This release adds packaging and privacy text, not new camera behavior.
+The 0.3.1 release-signed APK has not replaced the debug app on that device.
+Physical-device checks do not establish compatibility with all Android phones.
+
+See SIGNING-CERTIFICATE.txt and the accompanying third-party notices.
